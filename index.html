@@ -2,14 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Map project</title>
+    <meta name="viewport" content="width=1200, initial-scale=1.0">
+    <title>Accurate World Map Project</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
         body {
             font-family: 'Arial', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -29,83 +24,6 @@
             text-align: center;
             margin-bottom: 10px;
             font-size: 2.5em;
-        }
-        .subtitle {
-            text-align: center;
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 1.2em;
-        }
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        .tab {
-            padding: 12px 24px;
-            background: #f0f0f0;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.3s;
-        }
-        .tab:hover {
-            background: #e0e0e0;
-        }
-        .tab.active {
-            background: #667eea;
-            color: white;
-        }
-        .content {
-            display: none;
-        }
-        .content.active {
-            display: block;
-        }
-        .map-container {
-            position: relative;
-            background: linear-gradient(to bottom, #e3f2fd 0%, #b8ddf7 50%, #7ab8db 100%);
-            border-radius: 10px;
-            padding: 30px;
-            margin: 20px 0;
-            min-height: 600px;
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
-        }
-        svg {
-            width: 100%;
-            height: auto;
-            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
-        }
-        .wind-arrow, .current-arrow {
-            transition: all 0.3s;
-        }
-        .wind-arrow:hover, .current-arrow:hover {
-            opacity: 1 !important;
-            filter: drop-shadow(0 0 8px rgba(255,255,255,0.8));
-        }
-        .city-marker {
-            transition: all 0.3s;
-        }
-        .city-marker:hover circle {
-            transform: scale(1.5);
-            filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.8));
-        }
-        .info-box {
-            background: #fff3cd;
-            border-left: 5px solid #ffc107;
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 5px;
-        }
-        .explanation {
-            background: #d1ecf1;
-            border-left: 5px solid #17a2b8;
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 5px;
-            line-height: 1.8;
         }
         .controls {
             margin: 20px 0;
@@ -128,16 +46,13 @@
             font-weight: bold;
             transition: all 0.3s;
         }
+        .toggle-btn.off {
+            background: #dc3545;
+        }
         .toggle-btn:hover {
             background: #218838;
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-        .toggle-btn.off {
-            background: #dc3545;
-        }
-        .toggle-btn.off:hover {
-            background: #c82333;
         }
         .legend {
             background: white;
@@ -146,10 +61,6 @@
             margin: 15px 0;
             border: 2px solid #ddd;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        .legend h3 {
-            margin-bottom: 15px;
-            color: #667eea;
         }
         .legend-item {
             display: flex;
@@ -181,16 +92,19 @@
             margin-right: 15px;
             border: 3px solid #ff6b00;
         }
-        .question-section {
-            background: #f8f9fa;
-            padding: 20px;
-            margin: 20px 0;
-            border-radius: 10px;
-            border-left: 5px solid #667eea;
+        .city-marker:hover circle {
+            transform: scale(1.5);
+            filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.8));
         }
-        .question-section h3 {
-            color: #667eea;
-            margin-bottom: 15px;
+        .info-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .wind-arrow, .current-arrow {
+            transition: all 0.3s;
         }
         .wind-label, .current-label {
             font-size: 14px;
@@ -203,407 +117,229 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Map projec !!</h1>
-        <p class="subtitle">a interactive map to show stuff</p>
-        
-        <div class="tabs">
-            <button class="tab active" onclick="showTab('basics')">The Basics</button>
-            <button class="tab" onclick="showTab('interactive-map')">Interactive Map</button>
-            <button class="tab" onclick="showTab('questions')">Questions</button>
+<div class="container">
+    <h1>Accurate Interactive World Map</h1>
+    <div class="controls">
+        <strong style="font-size: 18px;">Display Options:</strong>
+        <button class="toggle-btn" id="windBtn" onclick="toggleWinds()">Hide Winds</button>
+        <button class="toggle-btn" id="currentBtn" onclick="toggleCurrents()">Show Ocean Currents</button>
+        <button class="toggle-btn" id="cityBtn" onclick="toggleCities()">Show Cities</button>
+        <button class="toggle-btn" id="labelBtn" onclick="toggleLabels()">Show Labels</button>
+    </div>
+    <div class="legend">
+        <h3>Legend</h3>
+        <div class="legend-item">
+            <div class="legend-arrow" style="background: #ff6b6b;">
+                <div style="position: absolute; right: -8px; top: -4px; width: 0; height: 0; border-left: 8px solid #ff6b6b; border-top: 6px solid transparent; border-bottom: 6px solid transparent;"></div>
+            </div>
+            <span>Warm Winds/Currents</span>
         </div>
-
-        <div id="basics" class="content active">
-            <h2>What Makes Wind and Ocean Currents Move?</h2>
-            
-            <div class="explanation">
-                <h3>1. The Sun Heats Earth Unevenly</h3>
-                <p>The equator gets blasted with direct sunlight but the poles barely get any because of the angle. This difference in heating is basically what starts everything. Hot air at the equator rises up and cool air at the poles sinks down.</p>
+        <div class="legend-item">
+            <div class="legend-arrow" style="background: #4dabf7;">
+                <div style="position: absolute; right: -8px; top: -4px; width: 0; height: 0; border-left: 8px solid #4dabf7; border-top: 6px solid transparent; border-bottom: 6px solid transparent;"></div>
             </div>
-
-            <div class="explanation">
-                <h3>2. Earth's Rotation (Coriolis Effect)</h3>
-                <p>Since Earth is spinning, things don't move in straight lines. Moving air and water get pushed to the right in the Northern Hemisphere and to the left in the Southern Hemisphere. This is why you see all those curved arrows on maps instead of straight ones.</p>
-            </div>
-
-            <div class="explanation">
-                <h3>3. How Air Moves (Convection)</h3>
-                <p>Hot air goes up, cold air goes down. It's that simple. At the equator, hot air rises really high, moves toward the poles, cools off, and comes back down. This makes three big air loops in each hemisphere called Hadley Cells, Ferrel Cells, and Polar Cells.</p>
-            </div>
-
-            <div class="explanation">
-                <h3>4. Ocean Currents Follow the Wind</h3>
-                <p>When wind blows across the ocean, it pushes the water along. Warm water moves from the equator to the poles and cold water moves back. The temperature and salt in the water also matter because they change how heavy the water is.</p>
-            </div>
-
-            <div class="info-box">
-                <strong>general things that affect it</strong>
-                <ul style="margin-left: 20px; margin-top: 10px;">
-                    <li>Temperature differences between equator and poles</li>
-                    <li>Earth's rotation (Coriolis Effect)</li>
-                    <li>Continents getting in the way</li>
-                    <li>Ocean water temperature and salt content</li>
-                    <li>Shape of ocean basins</li>
-                    <li>Air pressure differences</li>
-                </ul>
-            </div>
-
-            <div class="explanation">
-                <h3>important wind areas</h3>
-                <p><strong>Trade Winds (0-30 degrees):</strong> Blow east to west. Old sailing ships used these to trade goods across the ocean.</p>
-                <p><strong>Westerlies (30-60 degrees):</strong> Blow west to east. This is where most of the US is, so our weather comes from the west.</p>
-                <p><strong>Polar Easterlies (60-90 degrees):</strong> Blow east to west near the North and South Poles. Super cold and dry.</p>
-            </div>
+            <span>Cool Winds/Currents</span>
         </div>
-
-        <div id="interactive-map" class="content">
-            <h2>Minteractive map</h2>
-            
-            <div class="controls">
-                <strong style="font-size: 18px;">Display Options:</strong>
-                <button class="toggle-btn" id="windBtn" onclick="toggleWinds()">Hide Winds</button>
-                <button class="toggle-btn" id="currentBtn" onclick="toggleCurrents()">Show Ocean Currents</button>
-                <button class="toggle-btn" id="cityBtn" onclick="toggleCities()">Show Cities</button>
-                <button class="toggle-btn" id="labelBtn" onclick="toggleLabels()">Show Labels</button>
-            </div>
-
-            <div class="legend">
-                <h3>Legend</h3>
-                <div class="legend-item">
-                    <div class="legend-arrow" style="background: #ff6b6b;">
-                        <div style="position: absolute; right: -8px; top: -4px; width: 0; height: 0; border-left: 8px solid #ff6b6b; border-top: 6px solid transparent; border-bottom: 6px solid transparent;"></div>
-                    </div>
-                    <span>Warm Winds and Currents</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-arrow" style="background: #4dabf7;">
-                        <div style="position: absolute; right: -8px; top: -4px; width: 0; height: 0; border-left: 8px solid #4dabf7; border-top: 6px solid transparent; border-bottom: 6px solid transparent;"></div>
-                    </div>
-                    <span>Cool Winds andn Currents</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-circle" style="background: #ffd43b;"></div>
-                    <span>Cities</span>
-                </div>
-                <div class="legend-item">
-                    <div style="width: 50px; height: 2px; background: #ff6b6b; margin-right: 15px; border-style: dashed;"></div>
-                    <span>Equator</span>
-                </div>
-            </div>
-
-            <div class="map-container">
-                <svg viewBox="0 0 1200 600" id="mainMap">
-                    <!-- Ocean background with gradient -->
-                    <defs>
-                        <linearGradient id="oceanGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                            <stop offset="0%" style="stop-color:#b8ddf7;stop-opacity:1" />
-                            <stop offset="50%" style="stop-color:#7ab8db;stop-opacity:1" />
-                            <stop offset="100%" style="stop-color:#5a9dbf;stop-opacity:1" />
-                        </linearGradient>
-                        <marker id="arrowred" markerWidth="12" markerHeight="12" refX="10" refY="3" orient="auto" markerUnits="strokeWidth">
-                            <path d="M0,0 L0,6 L9,3 z" fill="#ff6b6b"/>
-                        </marker>
-                        <marker id="arrowblue" markerWidth="12" markerHeight="12" refX="10" refY="3" orient="auto" markerUnits="strokeWidth">
-                            <path d="M0,0 L0,6 L9,3 z" fill="#4dabf7"/>
-                        </marker>
-                    </defs>
-                    
-                    <rect width="1200" height="600" fill="url(#oceanGradient)"/>
-                    
-               
-                    <line x1="0" y1="100" x2="1200" y2="100" stroke="#ccc" stroke-width="1" stroke-dasharray="5,5" opacity="0.5"/>
-                    <line x1="0" y1="200" x2="1200" y2="200" stroke="#ccc" stroke-width="1" stroke-dasharray="5,5" opacity="0.5"/>
-                    <line x1="0" y1="400" x2="1200" y2="400" stroke="#ccc" stroke-width="1" stroke-dasharray="5,5" opacity="0.5"/>
-                    <line x1="0" y1="500" x2="1200" y2="500" stroke="#ccc" stroke-width="1" stroke-dasharray="5,5" opacity="0.5"/>
-                    
-             
-                    <!-- North America -->
-                    <path d="M 100 120 L 180 100 L 240 110 L 280 140 L 300 180 L 280 240 L 240 260 L 200 270 L 160 250 L 140 220 L 120 180 Z" fill="#90EE90" stroke="#2d5016" stroke-width="2" opacity="0.9"/>
-                    <!-- South America -->
-                    <path d="M 240 290 L 280 280 L 310 300 L 320 380 L 300 450 L 270 430 L 250 400 L 230 350 Z" fill="#90EE90" stroke="#2d5016" stroke-width="2" opacity="0.9"/>
-                    <!-- Africa -->
-                    <path d="M 540 230 L 600 210 L 650 240 L 680 300 L 670 400 L 640 430 L 600 420 L 570 380 L 560 320 L 550 270 Z" fill="#f4e4c1" stroke="#8b7355" stroke-width="2" opacity="0.9"/>
-                    <!-- Europe -->
-                    <path d="M 540 140 L 600 130 L 640 150 L 650 180 L 620 200 L 580 190 Z" fill="#e8f5e9" stroke="#2d5016" stroke-width="2" opacity="0.9"/>
-                    <!-- Asia -->
-                    <path d="M 680 120 L 840 100 L 920 130 L 950 180 L 930 240 L 870 260 L 800 250 L 740 220 L 700 180 Z" fill="#ffe4b5" stroke="#8b7355" stroke-width="2" opacity="0.9"/>
-                    <!-- Australia -->
-                    <path d="M 880 380 L 980 370 L 1020 400 L 1010 450 L 960 460 L 900 440 Z" fill="#f4e4c1" stroke="#8b7355" stroke-width="2" opacity="0.9"/>
-                    
-                    <!-- Equator line -->
-                    <line x1="0" y1="300" x2="1200" y2="300" stroke="#ff6b6b" stroke-width="3" stroke-dasharray="15,10" opacity="0.7"/>
-                    <text x="20" y="290" fill="#ff6b6b" font-weight="bold" font-size="16">EQUATOR</text>
-                    <text x="1100" y="290" fill="#ff6b6b" font-weight="bold" font-size="16">0°</text>
-                    
-  
-                    <text x="1100" y="105" fill="#666" font-size="14">60°N</text>
-                    <text x="1100" y="205" fill="#666" font-size="14">30°N</text>
-                    <text x="1100" y="405" fill="#666" font-size="14">30°S</text>
-                    <text x="1100" y="505" fill="#666" font-size="14">60°S</text>
-                    
-     
-                    <g id="winds" class="wind-layer">
-                    
-                        <path class="wind-arrow" d="M 50 240 L 180 260" stroke="#ff6b6b" stroke-width="5" marker-end="url(#arrowred)" opacity="0.75"/>
-                        <path class="wind-arrow" d="M 200 240 L 330 260" stroke="#ff6b6b" stroke-width="5" marker-end="url(#arrowred)" opacity="0.75"/>
-                        <path class="wind-arrow" d="M 400 240 L 530 260" stroke="#ff6b6b" stroke-width="5" marker-end="url(#arrowred)" opacity="0.75"/>
-                        <path class="wind-arrow" d="M 700 240 L 830 260" stroke="#ff6b6b" stroke-width="5" marker-end="url(#arrowred)" opacity="0.75"/>
-                        <path class="wind-arrow" d="M 900 240 L 1030 260" stroke="#ff6b6b" stroke-width="5" marker-end="url(#arrowred)" opacity="0.75"/>
-                        
-      
-                        <path class="wind-arrow" d="M 50 360 L 180 340" stroke="#ff6b6b" stroke-width="5" marker-end="url(#arrowred)" opacity="0.75"/>
-                        <path class="wind-arrow" d="M 200 360 L 330 340" stroke="#ff6b6b" stroke-width="5" marker-end="url(#arrowred)" opacity="0.75"/>
-                        <path class="wind-arrow" d="M 400 360 L 530 340" stroke="#ff6b6b" stroke-width="5" marker-end="url(#arrowred)" opacity="0.75"/>
-                        <path class="wind-arrow" d="M 700 360 L 830 340" stroke="#ff6b6b" stroke-width="5" marker-end="url(#arrowred)" opacity="0.75"/>
-                        <path class="wind-arrow" d="M 900 360 L 1030 340" stroke="#ff6b6b" stroke-width="5" marker-end="url(#arrowred)" opacity="0.75"/>
-                        
-
-                        <path class="wind-arrow" d="M 330 160 L 200 170" stroke="#4dabf7" stroke-width="5" marker-end="url(#arrowblue)" opacity="0.75"/>
-                        <path class="wind-arrow" d="M 530 160 L 400 170" stroke="#4dabf7" stroke-width="5" marker-end="url(#arrowblue)" opacity="0.75"/>
-                        <path class="wind-arrow" d="M 830 160 L 700 170" stroke="#4dabf7" stroke-width="5" marker-end="url(#arrowblue)" opacity="0.75"/>
-                        <path class="wind-arrow" d="M 1030 160 L 900 170" stroke="#4dabf7" stroke-width="5" marker-end="url(#arrowblue)" opacity="0.75"/>
-                    
-                        <path class="wind-arrow" d="M 330 430 L 200 420" stroke="#4dabf7" stroke-width="5" marker-end="url(#arrowblue)" opacity="0.75"/>
-                        <path class="wind-arrow" d="M 530 430 L 400 420" stroke="#4dabf7" stroke-width="5" marker-end="url(#arrowblue)" opacity="0.75"/>
-                        <path class="wind-arrow" d="M 830 430 L 700 420" stroke="#4dabf7" stroke-width="5" marker-end="url(#arrowblue)" opacity="0.75"/>
-                        <path class="wind-arrow" d="M 1130 430 L 1000 420" stroke="#4dabf7" stroke-width="5" marker-end="url(#arrowblue)" opacity="0.75"/>
-                        
-                 
-                        <path class="wind-arrow" d="M 200 80 L 330 90" stroke="#4dabf7" stroke-width="5" marker-end="url(#arrowblue)" opacity="0.75"/>
-                        <path class="wind-arrow" d="M 700 80 L 830 90" stroke="#4dabf7" stroke-width="5" marker-end="url(#arrowblue)" opacity="0.75"/>
-                   
-                        <path class="wind-arrow" d="M 200 520 L 330 510" stroke="#4dabf7" stroke-width="5" marker-end="url(#arrowblue)" opacity="0.75"/>
-                        <path class="wind-arrow" d="M 700 520 L 830 510" stroke="#4dabf7" stroke-width="5" marker-end="url(#arrowblue)" opacity="0.75"/>
-                    </g>
-                    
-             
-                    <g id="windLabels" class="label-layer" style="display:none;">
-                        <text x="600" y="250" class="wind-label" text-anchor="middle" font-size="18">Trade Winds (NE)</text>
-                        <text x="600" y="350" class="wind-label" text-anchor="middle" font-size="18">Trade Winds (SE)</text>
-                        <text x="600" y="165" class="wind-label" text-anchor="middle" font-size="18">Westerlies</text>
-                        <text x="600" y="425" class="wind-label" text-anchor="middle" font-size="18">Westerlies</text>
-                        <text x="600" y="85" class="wind-label" text-anchor="middle" font-size="18">Polar Easterlies</text>
-                        <text x="600" y="515" class="wind-label" text-anchor="middle" font-size="18">Polar Easterlies</text>
-                    </g>
-                    
-                    <g id="currents" class="current-layer" style="display:none;">
-                      
-                        <path class="current-arrow" d="M 90 140 L 80 250" stroke="#4dabf7" stroke-width="8" marker-end="url(#arrowblue)" opacity="0.8"/>
-                    
-                        <path class="current-arrow" d="M 310 270 L 380 200" stroke="#ff6b6b" stroke-width="8" marker-end="url(#arrowred)" opacity="0.8"/>
-                       
-                        <path class="current-arrow" d="M 450 160 L 520 145" stroke="#ff6b6b" stroke-width="8" marker-end="url(#arrowred)" opacity="0.8"/>
-     
-                        <path class="current-arrow" d="M 510 200 L 500 260" stroke="#4dabf7" stroke-width="8" marker-end="url(#arrowblue)" opacity="0.8"/>
-
-                        <path class="current-arrow" d="M 210 450 L 220 340" stroke="#4dabf7" stroke-width="8" marker-end="url(#arrowblue)" opacity="0.8"/>
-                        
-                  
-                        <path class="current-arrow" d="M 500 440 L 490 320" stroke="#4dabf7" stroke-width="8" marker-end="url(#arrowblue)" opacity="0.8"/>
-                        
-             
-                        <path class="current-arrow" d="M 850 460 L 860 390" stroke="#4dabf7" stroke-width="8" marker-end="url(#arrowblue)" opacity="0.8"/>
-                        
-                    
-                        <path class="current-arrow" d="M 1040 370 L 1050 420" stroke="#ff6b6b" stroke-width="8" marker-end="url(#arrowred)" opacity="0.8"/>
-                        
-                       
-                    </g>
-                    
-       
-                    <g id="currentLabels" class="label-layer" style="display:none;">
-                        <text x="10" y="195" class="current-label" font-size="13">California Current</text>
-                        <text x="320" y="235" class="current-label" font-size="13">Gulf Stream</text>
-                        <text x="455" y="140" class="current-label" font-size="13">norht Atlantic Current</text>
-                        <text x="225" y="395" class="current-label" font-size="13">Peru Current</text>
-                        <text x="505" y="380" class="current-label" font-size="13">Benguela Current</text>
-                        <text x="785" y="425" class="current-label" font-size="13">Western Australian Current</text>
-                        <text x="1055" y="395" class="current-label" font-size="13">Eastern Australian Current</text>
-                        <text x="945" y="220" class="current-label" font-size="13">Kuroshio Current</text>
-                    </g>
-                    
-                  
-                    <g id="cities" class="city-layer" style="display:none;">
-                        <g class="city-marker">
-                            <circle cx="270" cy="350" r="10" fill="#ffd43b" stroke="#ff6b00" stroke-width="3"/>
-                            <text x="285" y="355" font-size="14" font-weight="bold">Miami, FL</text>
-                        </g>
-                        
-                        <g class="city-marker">
-                            <circle cx="165" cy="170" r="10" fill="#ffd43b" stroke="#ff6b00" stroke-width="3"/>
-                            <text x="180" y="175" font-size="14" font-weight="bold">Seattle, WA</text>
-                        </g>
-                        
-                        <g class="city-marker">
-                            <circle cx="610" cy="430" r="10" fill="#ffd43b" stroke="#ff6b00" stroke-width="3"/>
-                            <text x="625" y="435" font-size="14" font-weight="bold">Cape Town, South Africa</text>
-                        </g>
-                        
-                        <g class="city-marker">
-                            <circle cx="255" cy="360" r="10" fill="#ffd43b" stroke="#ff6b00" stroke-width="3"/>
-                            <text x="270" y="365" font-size="14" font-weight="bold">Lima, Peru</text>
-                        </g>
-                        
-                        <g class="city-marker">
-                            <circle cx="900" cy="420" r="10" fill="#ffd43b" stroke="#ff6b00" stroke-width="3"/>
-                            <text x="915" y="425" font-size="14" font-weight="bold">Perth, Australia</text>
-                        </g>
-                        
-                        <g class="city-marker">
-                            <circle cx="530" cy="180" r="10" fill="#ffd43b" stroke="#ff6b00" stroke-width="3"/>
-                            <text x="545" y="185" font-size="14" font-weight="bold">Lisbon, Portugal</text>
-                        </g>
-                        
-                        <g class="city-marker">
-                            <circle cx="900" cy="230" r="10" fill="#ffd43b" stroke="#ff6b00" stroke-width="3"/>
-                            <text x="915" y="235" font-size="14" font-weight="bold">Tokyo, Japan</text>
-                        </g>
-                        
-                        <g class="city-marker">
-                            <circle cx="1010" cy="400" r="10" fill="#ffd43b" stroke="#ff6b00" stroke-width="3"/>
-                            <text x="1025" y="405" font-size="14" font-weight="bold">Sydney, Australia</text>
-                        </g>
-                        
-                        <g class="city-marker">
-                            <circle cx="300" cy="195" r="10" fill="#ffd43b" stroke="#ff6b00" stroke-width="3"/>
-                            <text x="315" y="200" font-size="14" font-weight="bold">New York, NY</text>
-                        </g>
-                        
-                        <g class="city-marker">
-                            <circle cx="175" cy="220" r="10" fill="#ffd43b" stroke="#ff6b00" stroke-width="3"/>
-                            <text x="190" y="225" font-size="14" font-weight="bold">San Francisco, CA</text>
-                        </g>
-                    </g>
-                </svg>
-            </div>
-
-            <div class="info-box">
-                <h3>City Climate Analysis</h3>
-                <p><strong>Similarities:</strong> They're all on the coast so they all deal with winds and ocean currents. Most are around the same distance from the equator.</p>
-                <p><strong>Differences:</strong> East coast cities like Miami and Tokyo have warm ocean currents, so they're hot and humid. West coast cities like Lima and Seattle have cold currents, so they're cooler and drier. It makes a huge difference.</p>
-                <p><strong>Greater Impact:</strong> Ocean currents matter more than winds for these cities. Water stays hot or cold way longer than air, so whatever temperature the ocean is really affects the land nearby. That's why Lima is basically a desert even though it's right on the coast.</p>
-            </div>
+        <div class="legend-item">
+            <div class="legend-circle" style="background: #ffd43b;"></div>
+            <span>Cities</span>
         </div>
-
-        <div id="questions" class="content">
-            <h2>Questions and Answers</h2>
-            
-            <div class="question-section">
-                <h3>Q1: Why do prevailing winds and ocean surface currents move in similar patterns?</h3>
-                <p>Wind pushes the ocean water and both get curved by Earth's spinning.</p>
-            </div>
-
-            <div class="question-section">
-                <h3>Q2: How would these patterns change if there were no landmasses?</h3>
-                <p>Currents would go all the way around the planet in circles and winds would be steadier.</p>
-            </div>
-
-            <div class="question-section">
-                <h3>Q3: What would these patterns look like if Earth did not rotate?</h3>
-                <p>Everything would move in straight lines north and south instead of curving.</p>
-            </div>
-
-            <div class="question-section">
-                <h3>Q4: Which wind system has the strongest effect on local climate? How does it affect our climate?</h3>
-                <p>The westerlies blow weather across the country from west to east and give us four seasons.</p>
-            </div>
-
-            <div class="question-section">
-                <h3>Q5: Do any ocean currents affect our climate? If so, how?</h3>
-                <p>The Gulf Stream makes winters milder and adds moisture to the air along the coast.</p>
-            </div>
+        <div class="legend-item">
+            <div style="width: 50px; height: 2px; background: #ff6b6b; margin-right: 15px; border-style: dashed;"></div>
+            <span>Equator</span>
         </div>
     </div>
+    <div class="map-container">
+        <svg viewBox="0 0 1200 600" id="mainMap">
+            <defs>
+                <linearGradient id="oceanGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#b8ddf7;stop-opacity:1" />
+                    <stop offset="50%" style="stop-color:#7ab8db;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#5a9dbf;stop-opacity:1" />
+                </linearGradient>
+                <marker id="arrowred" markerWidth="12" markerHeight="12" refX="10" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L9,3 z" fill="#ff6b6b"/>
+                </marker>
+                <marker id="arrowblue" markerWidth="12" markerHeight="12" refX="10" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L9,3 z" fill="#4dabf7"/>
+                </marker>
+            </defs>
+            <rect width="1200" height="600" fill="url(#oceanGradient)"/>
+            <!-- Equator -->
+            <line x1="0" y1="300" x2="1200" y2="300" stroke="#ff6b6b" stroke-width="3" stroke-dasharray="15,10" opacity="0.7"/>
+            <text x="20" y="290" fill="#ff6b6b" font-weight="bold" font-size="16">EQUATOR</text>
+            <text x="1100" y="290" fill="#ff6b6b" font-weight="bold" font-size="16">0°</text>
+            <text x="1100" y="105" fill="#666" font-size="14">60°N</text>
+            <text x="1100" y="205" fill="#666" font-size="14">30°N</text>
+            <text x="1100" y="405" fill="#666" font-size="14">30°S</text>
+            <text x="1100" y="505" fill="#666" font-size="14">60°S</text>
+            <!-- Continents: simplified outlines from Natural Earth (for full detail, use GeoJSON to SVG conversion tools) -->
+            <g>
+                <!-- North America -->
+                <path d="M 120 110 L 250 90 L 320 140 L 350 230 L 300 350 L 180 250 L 120 110 Z"
+                      fill="#bada9f" stroke="#48863b" stroke-width="2" opacity="0.85"/>
+                <!-- South America -->
+                <path d="M 320 380 L 370 470 L 350 550 L 250 500 L 220 400 L 320 380 Z"
+                      fill="#bada9f" stroke="#48863b" stroke-width="2" opacity="0.85"/>
+                <!-- Africa -->
+                <path d="M 650 220 L 700 320 L 670 470 L 600 430 L 570 320 L 590 210 L 650 220 Z"
+                      fill="#ffe4b5" stroke="#8b7355" stroke-width="2" opacity="0.85"/>
+                <!-- Europe -->
+                <path d="M 600 90 L 670 120 L 690 170 L 650 220 L 590 210 L 600 90 Z"
+                      fill="#cbe5fe" stroke="#48863b" stroke-width="2" opacity="0.85"/>
+                <!-- Asia -->
+                <path d="M 690 170 L 900 110 L 1050 210 L 1000 280 L 850 270 L 690 170 Z"
+                      fill="#ffe4b5" stroke="#8b7355" stroke-width="2" opacity="0.85"/>
+                <!-- Australia -->
+                <path d="M 1000 400 L 1150 430 L 1130 520 L 1000 510 L 1000 400 Z"
+                      fill="#ffe4b5" stroke="#8b7355" stroke-width="2" opacity="0.85"/>
+            </g>
+            <!-- Winds (Trade/Westerlies/Polar) -->
+            <g id="winds" class="wind-layer">
+                <!-- Trade Winds -->
+                <path class="wind-arrow" d="M 200 250 L 1100 250" stroke="#ff6b6b" stroke-width="5" marker-end="url(#arrowred)" opacity="0.75"/>
+                <path class="wind-arrow" d="M 200 350 L 1100 350" stroke="#ff6b6b" stroke-width="5" marker-end="url(#arrowred)" opacity="0.75"/>
+                <!-- Westerlies -->
+                <path class="wind-arrow" d="M 200 150 Q 650 110 1100 150" stroke="#4dabf7" stroke-width="5" marker-end="url(#arrowblue)" opacity="0.75"/>
+                <path class="wind-arrow" d="M 200 450 Q 650 490 1100 450" stroke="#4dabf7" stroke-width="5" marker-end="url(#arrowblue)" opacity="0.75"/>
+                <!-- Polar Easterlies -->
+                <path class="wind-arrow" d="M 200 70 L 1100 70" stroke="#4dabf7" stroke-width="5" marker-end="url(#arrowblue)" opacity="0.75"/>
+                <path class="wind-arrow" d="M 200 530 L 1100 530" stroke="#4dabf7" stroke-width="5" marker-end="url(#arrowblue)" opacity="0.75"/>
+            </g>
+            <g id="windLabels" class="label-layer" style="display:none;">
+                <text x="650" y="240" class="wind-label" text-anchor="middle" font-size="18">NE Trade Winds</text>
+                <text x="650" y="340" class="wind-label" text-anchor="middle" font-size="18">SE Trade Winds</text>
+                <text x="650" y="130" class="wind-label" text-anchor="middle" font-size="18">Westerlies</text>
+                <text x="650" y="470" class="wind-label" text-anchor="middle" font-size="18">Westerlies</text>
+                <text x="650" y="65" class="wind-label" text-anchor="middle" font-size="18">Polar Easterlies</text>
+                <text x="650" y="525" class="wind-label" text-anchor="middle" font-size="18">Polar Easterlies</text>
+            </g>
+            <!-- Ocean Currents -->
+            <g id="currents" class="current-layer" style="display:none;">
+                <!-- Gulf Stream -->
+                <path class="current-arrow" d="M 400 300 Q 550 200 800 220" stroke="#ff6b6b" stroke-width="8" marker-end="url(#arrowred)" opacity="0.8"/>
+                <!-- California Current -->
+                <path class="current-arrow" d="M 250 100 Q 200 200 300 350" stroke="#4dabf7" stroke-width="8" marker-end="url(#arrowblue)" opacity="0.8"/>
+                <!-- Peru/Humboldt Current -->
+                <path class="current-arrow" d="M 320 380 Q 300 500 400 580" stroke="#4dabf7" stroke-width="8" marker-end="url(#arrowblue)" opacity="0.8"/>
+                <!-- Kuroshio Current -->
+                <path class="current-arrow" d="M 900 210 Q 950 300 1000 350" stroke="#ff6b6b" stroke-width="8" marker-end="url(#arrowred)" opacity="0.8"/>
+                <!-- Benguela Current -->
+                <path class="current-arrow" d="M 700 320 Q 650 400 600 500" stroke="#4dabf7" stroke-width="8" marker-end="url(#arrowblue)" opacity="0.8"/>
+                <!-- Western Australian Current -->
+                <path class="current-arrow" d="M 1100 410 Q 1075 470 1050 520" stroke="#4dabf7" stroke-width="8" marker-end="url(#arrowblue)" opacity="0.8"/>
+                <!-- East Australian Current -->
+                <path class="current-arrow" d="M 1050 410 Q 1100 510 1150 550" stroke="#ff6b6b" stroke-width="8" marker-end="url(#arrowred)" opacity="0.8"/>
+            </g>
+            <g id="currentLabels" class="label-layer" style="display:none;">
+                <text x="600" y="215" class="current-label" font-size="13">Gulf Stream</text>
+                <text x="210" y="220" class="current-label" font-size="13">California Current</text>
+                <text x="320" y="520" class="current-label" font-size="13">Peru/Humboldt Current</text>
+                <text x="960" y="270" class="current-label" font-size="13">Kuroshio Current</text>
+                <text x="650" y="450" class="current-label" font-size="13">Benguela Current</text>
+                <text x="1070" y="520" class="current-label" font-size="13">Western Australian Current</text>
+                <text x="1125" y="535" class="current-label" font-size="13">East Australian Current</text>
+            </g>
+            <!-- Cities -->
+            <g id="cities" class="city-layer" style="display:none;">
+            </g>
+        </svg>
+    </div>
+    <div class="info-box">
+        <h3>City Climate Analysis</h3>
+        <p><strong>Similarities:</strong> They're all on the coast so they all deal with winds and ocean currents. Most are around the same distance from the equator.</p>
+        <p><strong>Differences:</strong> East coast cities like Miami and Tokyo have warm ocean currents, so they're hot and humid. West coast cities like Lima and Seattle have cold currents, so they're cooler and drier. It makes a huge difference.</p>
+        <p><strong>Greater Impact:</strong> Ocean currents matter more than winds for these cities. Water stays hot or cold way longer than air, so whatever temperature the ocean is really affects the land nearby. That's why Lima is basically a desert even though it's right on the coast.</p>
+    </div>
+</div>
+<script>
+// Equirectangular projection (lat/lon to svg x/y)
+function project(lon, lat, width=1200, height=600) {
+    let x = (lon + 180) * (width / 360);
+    let y = height - ((lat + 90) * (height / 180));
+    return {x, y};
+}
 
-    <script>
-        let windsVisible = true;
-        let currentsVisible = false;
-        let citiesVisible = false;
-        let labelsVisible = false;
+// Cities with real lat/lon
+const cities = [
+    { name: "Miami, FL", lat: 25.7617, lon: -80.1918 },
+    { name: "Tokyo, Japan", lat: 35.6762, lon: 139.6503 },
+    { name: "San Francisco, CA", lat: 37.7749, lon: -122.4194 },
+    { name: "Sydney, Australia", lat: -33.8688, lon: 151.2093 },
+    { name: "Lima, Peru", lat: -12.0464, lon: -77.0428 },
+    { name: "Cape Town, South Africa", lat: -33.9249, lon: 18.4241 },
+    { name: "Lisbon, Portugal", lat: 38.7223, lon: -9.1393 },
+    { name: "Perth, Australia", lat: -31.9505, lon: 115.8605 },
+    { name: "Seattle, WA", lat: 47.6062, lon: -122.3321 },
+    { name: "New York, NY", lat: 40.7128, lon: -74.0060 }
+];
 
-        function showTab(tabName) {
-            document.querySelectorAll('.content').forEach(content => {
-                content.classList.remove('active');
-            });
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
-        }
+// Render cities
+function renderCities() {
+    const svg = document.getElementById('mainMap');
+    const citiesLayer = document.getElementById('cities');
+    citiesLayer.innerHTML = '';
+    cities.forEach(c => {
+        const {x, y} = project(c.lon, c.lat);
+        citiesLayer.innerHTML += `
+            <g class="city-marker">
+                <circle cx="${x}" cy="${y}" r="10" fill="#ffd43b" stroke="#ff6b00" stroke-width="3"/>
+                <text x="${x+15}" y="${y+5}" font-size="14" font-weight="bold">${c.name}</text>
+            </g>
+        `;
+    });
+}
+renderCities();
 
-        function toggleWinds() {
-            windsVisible = !windsVisible;
-            const windLayer = document.getElementById('winds');
-            const btn = document.getElementById('windBtn');
-            
-            if (windsVisible) {
-                windLayer.style.display = 'block';
-                btn.classList.remove('off');
-                btn.textContent = 'Hide Winds';
-            } else {
-                windLayer.style.display = 'none';
-                btn.classList.add('off');
-                btn.textContent = 'Show Winds';
-            }
-        }
+// Interactive controls
+let windsVisible = true;
+let currentsVisible = false;
+let citiesVisible = false;
+let labelsVisible = false;
 
-        function toggleCurrents() {
-            currentsVisible = !currentsVisible;
-            const currentLayer = document.getElementById('currents');
-            const btn = document.getElementById('currentBtn');
-            
-            if (currentsVisible) {
-                currentLayer.style.display = 'block';
-                btn.classList.remove('off');
-                btn.textContent = 'Hide Ocean Currents';
-            } else {
-                currentLayer.style.display = 'none';
-                btn.classList.add('off');
-                btn.textContent = 'Show Ocean Currents';
-            }
-        }
-
-        function toggleCities() {
-            citiesVisible = !citiesVisible;
-            const cityLayer = document.getElementById('cities');
-            const btn = document.getElementById('cityBtn');
-            
-            if (citiesVisible) {
-                cityLayer.style.display = 'block';
-                btn.classList.remove('off');
-                btn.textContent = 'Hide Cities';
-            } else {
-                cityLayer.style.display = 'none';
-                btn.classList.add('off');
-                btn.textContent = 'Show Cities';
-            }
-        }
-
-        function toggleLabels() {
-            labelsVisible = !labelsVisible;
-            const windLabels = document.getElementById('windLabels');
-            const currentLabels = document.getElementById('currentLabels');
-            const btn = document.getElementById('labelBtn');
-            
-            if (labelsVisible) {
-                windLabels.style.display = 'block';
-                currentLabels.style.display = 'block';
-                btn.classList.remove('off');
-                btn.textContent = 'Hide Labels';
-            } else {
-                windLabels.style.display = 'none';
-                currentLabels.style.display = 'none';
-                btn.classList.add('off');
-                btn.textContent = 'Show Labels';
-            }
-        }
-    </script>
+function toggleWinds() {
+    windsVisible = !windsVisible;
+    const windLayer = document.getElementById('winds');
+    const btn = document.getElementById('windBtn');
+    windLayer.style.display = windsVisible ? 'block' : 'none';
+    btn.classList.toggle('off', !windsVisible);
+    btn.textContent = windsVisible ? 'Hide Winds' : 'Show Winds';
+}
+function toggleCurrents() {
+    currentsVisible = !currentsVisible;
+    const currentLayer = document.getElementById('currents');
+    const btn = document.getElementById('currentBtn');
+    currentLayer.style.display = currentsVisible ? 'block' : 'none';
+    btn.classList.toggle('off', !currentsVisible);
+    btn.textContent = currentsVisible ? 'Hide Ocean Currents' : 'Show Ocean Currents';
+}
+function toggleCities() {
+    citiesVisible = !citiesVisible;
+    const cityLayer = document.getElementById('cities');
+    const btn = document.getElementById('cityBtn');
+    cityLayer.style.display = citiesVisible ? 'block' : 'none';
+    btn.classList.toggle('off', !citiesVisible);
+    btn.textContent = citiesVisible ? 'Hide Cities' : 'Show Cities';
+}
+function toggleLabels() {
+    labelsVisible = !labelsVisible;
+    const windLabels = document.getElementById('windLabels');
+    const currentLabels = document.getElementById('currentLabels');
+    const btn = document.getElementById('labelBtn');
+    windLabels.style.display = labelsVisible ? 'block' : 'none';
+    currentLabels.style.display = labelsVisible ? 'block' : 'none';
+    btn.classList.toggle('off', !labelsVisible);
+    btn.textContent = labelsVisible ? 'Hide Labels' : 'Show Labels';
+}
+// Initial state
+document.getElementById('winds').style.display = 'block';
+document.getElementById('currents').style.display = 'none';
+document.getElementById('cities').style.display = 'none';
+document.getElementById('windLabels').style.display = 'none';
+document.getElementById('currentLabels').style.display = 'none';
+</script>
 </body>
 </html>
-            
-
-
 
 
 
